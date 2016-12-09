@@ -1,0 +1,7 @@
+:root{
+  --main-bg-color: #f0eff5;
+}
+/* Base Application Styles */
+body {
+  background: var(--main-bg-color);
+}
