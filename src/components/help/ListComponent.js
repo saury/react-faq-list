@@ -3,173 +3,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router'
+import LoadingComponent from '../public/LoadingComponent';
 // 2 way binding helper
 // import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 require('styles/help/List.scss');
 
-const mock_data = [
-	{
-	'title': 'Article #1',
-	'url': 'link_1'
-	},
-	{
-	'title': 'Article #2',
-	'url': 'link_2'
-	},
-	{
-	'title': 'Article #3',
-	'url': 'link_3'
-	},
-	{
-	'title': 'Article #4',
-	'url': 'link_4'
-	},
-	{
-	'title': 'Article #5',
-	'url': 'link_5'
-	},
-	{
-	'title': 'Article #6',
-	'url': 'link_6'
-	},
-	{
-	'title': 'Article #7',
-	'url': 'link_7'
-	},
-	{
-	'title': 'Article #8',
-	'url': 'link_8'
-	},
-	{
-	'title': 'Article #9',
-	'url': 'link_9'
-	},
-	{
-	'title': 'Article #10',
-	'url': 'link_10'
-	},
-	{
-	'title': 'Article #11',
-	'url': 'link_11'
-	},
-	{
-	'title': 'Article #12',
-	'url': 'link_12'
-	},
-	{
-	'title': 'Article #13',
-	'url': 'link_13'
-	},
-	{
-	'title': 'Article #14',
-	'url': 'link_14'
-	},
-	{
-	'title': 'Article #15',
-	'url': 'link_15'
-	},
-	{
-	'title': 'Article #16',
-	'url': 'link_16'
-	},
-	{
-	'title': 'Article #17',
-	'url': 'link_17'
-	},
-	{
-	'title': 'Article #18',
-	'url': 'link_18'
-	},
-	{
-	'title': 'Article #19',
-	'url': 'link_19'
-	},
-	{
-	'title': 'Article #20',
-	'url': 'link_20'
-	},
-	{
-	'title': 'Article #21',
-	'url': 'link_21'
-	},
-	{
-	'title': 'Article #22',
-	'url': 'link_22'
-	},
-	{
-	'title': 'Article #23',
-	'url': 'link_23'
-	},
-	{
-	'title': 'Article #24',
-	'url': 'link_24'
-	},
-	{
-	'title': 'Article #25',
-	'url': 'link_25'
-	},
-	{
-	'title': 'Article #26',
-	'url': 'link_26'
-	},
-	{
-	'title': 'Article #27',
-	'url': 'link_27'
-	},
-	{
-	'title': 'Article #28',
-	'url': 'link_28'
-	},
-	{
-	'title': 'Article #29',
-	'url': 'link_29'
-	},
-	{
-	'title': 'Article #30',
-	'url': 'link_30'
-	},
-	{
-	'title': 'Article #31',
-	'url': 'link_31'
-	},
-	{
-	'title': 'Article #32',
-	'url': 'link_32'
-	},
-	{
-	'title': 'Article #33',
-	'url': 'link_33'
-	},
-	{
-	'title': 'Article #34',
-	'url': 'link_34'
-	},
-	{
-	'title': 'Article #35',
-	'url': 'link_35'
-	},
-	{
-	'title': 'Article #36',
-	'url': 'link_36'
-	},
-	{
-	'title': 'Article #37',
-	'url': 'link_37'
-	},
-	{
-	'title': 'Article #38',
-	'url': 'link_38'
-	},
-	{
-	'title': 'Article #39',
-	'url': 'link_39'
-	},
-	{
-	'title': 'Article #40',
-	'url': 'link_40'
-	}
-]
+var getJSON = function(url) {
+  var promise = new Promise(function(resolve, reject){
+    var client = new XMLHttpRequest();
+    client.open('GET', url);
+    client.onreadystatechange = handler;
+    client.responseType = 'json';
+    client.setRequestHeader('Accept', 'application/json');
+    client.send();
+
+    function handler() {
+		if (this.readyState !== 4) {
+		return;
+		}
+		if (this.status === 200) {
+		resolve(this.response);
+		} else {
+		reject(new Error(this.statusText));
+		}
+    }
+  });
+
+  return promise;
+};
 
 class ListSearchBar extends React.Component {
 	constructor(props) {
@@ -184,10 +46,6 @@ class ListSearchBar extends React.Component {
 	render(){
 		return (
 			<div className="list-search-bar">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40" aria-labelledby="search icon">
-					<line x1="30" y1="30" x2="85" y2="85" stroke="#999" strokeWidth="4"/>
-					<circle r="20" cx="40" cy="40" fill="#fff" stroke="#999" strokeWidth="4"/>
-		        </svg>
 				<input  type="text" placeholder="Search" value={this.props.searchValue} onChange={this.handleChange} ref="filterNameInput"
 				/>
 			</div>
@@ -246,15 +104,16 @@ class ListComponent extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			virgin: true,
 			searchValue: '',
-			dataFiltered: mock_data
+			dataFiltered: []
 		}
 		this.handleUserInput = this.handleUserInput.bind(this);
 	}
 	handleUserInput(data) {
 	    this.setState({
 	        searchValue: data.searchValue,
-	        dataFiltered: this.handleData(mock_data, data.searchValue)
+	        dataFiltered: this.handleData(this.state.dataFiltered, data.searchValue)
 	    });
 	}
 	handleData(data, filter) {
@@ -267,11 +126,37 @@ class ListComponent extends React.Component {
 		});
 		return result;
 	}
+	handleRawData(data){
+		let result = [];
+		console.log(data.Items);
+		data.Items.map(function(item){
+			result.push({
+				title: item.Title,
+				url: item.Id
+			})
+		})
+		console.log(result);
+		this.setState({
+			virgin: false,
+			dataFiltered: result
+		})
+	}
 	render() {
+		const _self = this;
+		if(this.state.virgin){
+			getJSON('http://cnshhq-e1dev100:8000/Zendesk/TBV3/GetArticles').then(
+			function(data) {
+				console.log('pooque');
+				_self.handleRawData(data);
+			}, function(error) {
+				throw 'error info:'+error+', try refreshing the page';
+			})
+		}
 		return (
 		  <div className="list-component">
 		    <ListSearchBar searchValue={this.state.searchValue} searchOperation={this.handleUserInput}/>
 		    <ListContainer resultData={this.state.dataFiltered}/>
+		  	<div style={{display: this.state.virgin?'flex':'none'}} className="list-loading"><LoadingComponent /></div>
 		  </div>
 		);
 	}

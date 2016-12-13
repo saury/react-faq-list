@@ -8,17 +8,17 @@ import DetailComponent from './help/DetailComponent';
 
 import { Router, Route, browserHistory } from 'react-router'
 
-class Nav extends React.Component {
-	render() {
-	  return (
-	    <ul className='navigation'>
-	    	<li>Back</li>
-	    	<li><strong>FAQ</strong></li>
-	    	<li>Close</li>
-	    </ul>
-	  );
-	}
-}
+// class Nav extends React.Component {
+// 	render() {
+// 	  return (
+// 	    <ul className='navigation'>
+// 	    	<li>Back</li>
+// 	    	<li><strong>FAQ</strong></li>
+// 	    	<li>Close</li>
+// 	    </ul>
+// 	  );
+// 	}
+// }
 
 class AppComponent extends React.Component {
   render() {
