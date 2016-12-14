@@ -2,13 +2,18 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router'
+import { browserHistory } from 'react-router'
 import LoadingComponent from '../public/LoadingComponent';
 // 2 way binding helper
 // import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 require('styles/help/List.scss');
 
+/**
+ * http get fn
+ * @param  {[string]} url
+ * @return promise
+ */
 var getJSON = function(url) {
   var promise = new Promise(function(resolve, reject){
     var client = new XMLHttpRequest();
@@ -33,11 +38,13 @@ var getJSON = function(url) {
   return promise;
 };
 
+// top search bar
 class ListSearchBar extends React.Component {
 	constructor(props) {
 	    super(props);
 	    this.handleChange = this.handleChange.bind(this);
 	}
+	// callback to filter the list according to the input value
 	handleChange() {
 	    this.props.searchOperation({
 	        searchValue: ReactDOM.findDOMNode(this.refs.filterNameInput).value
@@ -46,53 +53,85 @@ class ListSearchBar extends React.Component {
 	render(){
 		return (
 			<div className="list-search-bar">
-				<input  type="text" placeholder="Search" value={this.props.searchValue} onChange={this.handleChange} ref="filterNameInput"
+				<input 
+					type="text" placeholder="Search" 
+					value={this.props.searchValue} 
+					onChange={this.handleChange} 
+					ref="filterNameInput"
 				/>
 			</div>
 		)
 	}
 }
 
+// each list item
 class ListItem extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	handleLink(){
+		// display the loading icon
+		this.props.cb(true);
+	    const path = '/faq/' + this.props.url;
+	    const _props = this.props;
+	    getJSON('http://cnshhq-e1dev100:8000/Zendesk/efp/user?userid=' + this.props.url).then(
+	    function(data) {
+	    	// link to the detail page
+		    browserHistory.push({
+		    	pathname: path,
+		    	// params need to pass, but not to show on the url path
+		    	state: {
+		    		title: _props.title,
+		    		author: data.Name || 'unknown',
+		    		date: _props.date,
+		    		htmlContent: _props.body
+		    	}
+		    })
+	    }, function(error) {
+	    	throw 'error info:'+error+', try refreshing the page';
+	    })
+	}
 	render(){
 		return (
-			<li className="list-item">
-				<Link to={{
-					pathname: '/faq/' + this.props.url, 
-					state: {
-						title: this.props.title,
-						author: 'haha',
-						date: this.props.date,
-						htmlContent: this.props.body
-					}
-				}}>
-					{this.props.title}
-				</Link>
+			<li className="list-item" onClick={() => this.handleLink()}>
+				{this.props.title}
 			</li>
 		)
 	}
 }
 
+// list container
 class ListContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showAll: false
+			showAll: false,
+			showLoading: false
 		}
 		this.showAllItems = this.showAllItems.bind(this);
+		this.handleCallback = this.handleCallback.bind(this);
 	}
+	// show all the list items
 	showAllItems(){
 		this.setState({
 			showAll: true
 		})
 	}
+	// callback to show the loading icon
+	handleCallback(bool){
+		this.setState({
+			showLoading: bool
+		})
+	}
 	render(){
 		let result;
+		// display all the list item when the showAll state is triggered
 		if(!!this.state.showAll){
-			result = this.props.resultData.map((_data, idx) => <ListItem key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
+			result = this.props.resultData.map((_data, idx) => <ListItem cb={this.handleCallback} key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
 		}
+		// else, only 5 items display
 		else {
-			result = this.props.resultData.slice(0,5).map((_data, idx) => <ListItem key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
+			result = this.props.resultData.slice(0,5).map((_data, idx) => <ListItem cb={this.handleCallback} key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
 		}
 		return (
 			<ul className="list-container">
@@ -103,11 +142,13 @@ class ListContainer extends React.Component {
 				<li style={{display: this.props.resultData.length === 0 ? 'block' : 'none', textAlign: 'center'}}>
 					<strong>Nothing found</strong>
 				</li>
+				<div style={{display: this.state.showLoading?'flex':'none'}} className="inner-loading"><LoadingComponent /></div>
 			</ul>
 		)
 	}
 }
 
+// the main component need to export
 class ListComponent extends React.Component {
 	constructor(props) {
 		super(props);
@@ -119,12 +160,14 @@ class ListComponent extends React.Component {
 		}
 		this.handleUserInput = this.handleUserInput.bind(this);
 	}
+	// set the input value and reset the filtered data to get the right list items display
 	handleUserInput(data) {
 	    this.setState({
 	        searchValue: data.searchValue,
 	        dataFiltered: this.handleData(this.state.dataRaw, data.searchValue)
 	    });
 	}
+	// the help fn for function above
 	handleData(data, filter) {
 		let result = [];
 		data.forEach((item) => {
@@ -135,6 +178,7 @@ class ListComponent extends React.Component {
 		});
 		return result;
 	}
+	// parser handle with the raw data
 	handleRawData(data){
 		let result = [];
 		data.Items.map(function(item){

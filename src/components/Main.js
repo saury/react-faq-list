@@ -27,8 +27,8 @@ const App = ({ children, location }) => (
     <ReactCSSTransitionGroup
       component="div"
       transitionName="router-transition"
-      transitionEnterTimeout={500}
-      transitionLeaveTimeout={500}
+      transitionEnterTimeout={200}
+      transitionLeaveTimeout={200}
     >
       {React.cloneElement(children, {
         key: location.pathname
