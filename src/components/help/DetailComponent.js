@@ -2,21 +2,25 @@
 
 import React from 'react';
 
-require('styles/help/Detail.css');
+require('styles/help/Detail.scss');
 
 
 class DetailComponent extends React.Component {
     render() {
-		const mock_article = '<div style="color: red">\
-									<span>'+this.props.params.articleName+'</span>\
-									<span style="text-decoration: underline; color: lime"> too young too simple</span>\
-									<span style="font-weight: 700; color: #ccc"> too young too simple</span>\
-								</div>';
+		const mock_article = this.props.location.state.htmlContent;
+		const date = (() => {
+					let fragment = (new Date(Number(this.props.location.state.date))).toString().split(' ');
+					return (fragment[1] + ' ' + fragment[2] + ', ' + fragment[3]);
+				})();
         return (
-        	<div style={{height: '200px'}}>
-	        	<div className = "detail-component" dangerouslySetInnerHTML = {{__html: mock_article}}>
-	            </div>
-        	</div>
+        	<div className="detail-component">
+        		<div className="detail-title">{this.props.location.state.title}</div>
+        		<div className="detail-author">{this.props.location.state.author}</div>
+        		<div className="detail-date">{date}</div>
+        		<hr/>
+		    	<div dangerouslySetInnerHTML = {{__html: mock_article}}>
+		        </div>
+            </div>
         );
     }
 }

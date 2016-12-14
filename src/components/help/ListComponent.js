@@ -57,7 +57,15 @@ class ListItem extends React.Component {
 	render(){
 		return (
 			<li className="list-item">
-				<Link to={'/faq/' + this.props.url}>
+				<Link to={{
+					pathname: '/faq/' + this.props.url, 
+					state: {
+						title: this.props.title,
+						author: 'haha',
+						date: this.props.date,
+						htmlContent: this.props.body
+					}
+				}}>
 					{this.props.title}
 				</Link>
 			</li>
@@ -81,16 +89,16 @@ class ListContainer extends React.Component {
 	render(){
 		let result;
 		if(!!this.state.showAll){
-			result = this.props.resultData.map((_data, idx) => <ListItem key={idx} url={_data.url} title={_data.title} />)
+			result = this.props.resultData.map((_data, idx) => <ListItem key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
 		}
 		else {
-			result = this.props.resultData.slice(0,5).map((_data, idx) => <ListItem key={idx} url={_data.url} title={_data.title} />)
+			result = this.props.resultData.slice(0,5).map((_data, idx) => <ListItem key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
 		}
 		return (
 			<ul className="list-container">
 				{result}
-				<li style={{display: this.props.resultData.length > 5 && !this.state.showAll ? 'block' : 'none'}} onClick={() => this.showAllItems()}>
-					<strong>See more {this.props.resultData.length - 5} articles</strong>
+				<li className="list-more" style={{display: this.props.resultData.length > 5 && !this.state.showAll ? 'block' : 'none'}} onClick={() => this.showAllItems()}>
+					Show all {this.props.resultData.length} articles
 				</li>
 				<li style={{display: this.props.resultData.length === 0 ? 'block' : 'none', textAlign: 'center'}}>
 					<strong>Nothing found</strong>
@@ -106,6 +114,7 @@ class ListComponent extends React.Component {
 		this.state = {
 			virgin: true,
 			searchValue: '',
+			dataRaw: [],
 			dataFiltered: []
 		}
 		this.handleUserInput = this.handleUserInput.bind(this);
@@ -113,7 +122,7 @@ class ListComponent extends React.Component {
 	handleUserInput(data) {
 	    this.setState({
 	        searchValue: data.searchValue,
-	        dataFiltered: this.handleData(this.state.dataFiltered, data.searchValue)
+	        dataFiltered: this.handleData(this.state.dataRaw, data.searchValue)
 	    });
 	}
 	handleData(data, filter) {
@@ -128,16 +137,17 @@ class ListComponent extends React.Component {
 	}
 	handleRawData(data){
 		let result = [];
-		console.log(data.Items);
 		data.Items.map(function(item){
 			result.push({
 				title: item.Title,
+				body: item.Body,
+				date: (item.LastUpdatedStamp).match(/\d{13}/)[0],
 				url: item.Id
 			})
 		})
-		console.log(result);
 		this.setState({
 			virgin: false,
+			dataRaw: result,
 			dataFiltered: result
 		})
 	}
@@ -146,7 +156,6 @@ class ListComponent extends React.Component {
 		if(this.state.virgin){
 			getJSON('http://cnshhq-e1dev100:8000/Zendesk/TBV3/GetArticles').then(
 			function(data) {
-				console.log('pooque');
 				_self.handleRawData(data);
 			}, function(error) {
 				throw 'error info:'+error+', try refreshing the page';
