@@ -2,41 +2,15 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router';
+
+import config from 'config';
 import LoadingComponent from '../public/LoadingComponent';
+import http from '../public/httpRequest';
 // 2 way binding helper
 // import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 require('styles/help/List.scss');
-
-/**
- * http get fn
- * @param  {[string]} url
- * @return promise
- */
-var getJSON = function(url) {
-  var promise = new Promise(function(resolve, reject){
-    var client = new XMLHttpRequest();
-    client.open('GET', url);
-    client.onreadystatechange = handler;
-    client.responseType = 'json';
-    client.setRequestHeader('Accept', 'application/json');
-    client.send();
-
-    function handler() {
-		if (this.readyState !== 4) {
-		return;
-		}
-		if (this.status === 200) {
-		resolve(this.response);
-		} else {
-		reject(new Error(this.statusText));
-		}
-    }
-  });
-
-  return promise;
-};
 
 // top search bar
 class ListSearchBar extends React.Component {
@@ -53,10 +27,10 @@ class ListSearchBar extends React.Component {
 	render(){
 		return (
 			<div className="list-search-bar">
-				<input 
-					type="text" placeholder="Search" 
-					value={this.props.searchValue} 
-					onChange={this.handleChange} 
+				<input
+					type="text" placeholder="Search"
+					value={this.props.searchValue}
+					onChange={this.handleChange}
 					ref="filterNameInput"
 				/>
 			</div>
@@ -74,7 +48,7 @@ class ListItem extends React.Component {
 		this.props.cb(true);
 	    const path = '/faq/' + this.props.url;
 	    const _props = this.props;
-	    getJSON('http://cnshhq-e1dev100:8000/Zendesk/efp/user?userid=' + this.props.url).then(
+	    http.get(config.apiAuthor(this.props.url)).then(
 	    function(data) {
 	    	// link to the detail page
 		    browserHistory.push({
@@ -198,7 +172,7 @@ class ListComponent extends React.Component {
 	render() {
 		const _self = this;
 		if(this.state.virgin){
-			getJSON('http://cnshhq-e1dev100:8000/Zendesk/TBV3/GetArticles').then(
+			http.get(config.apiList()).then(
 			function(data) {
 				_self.handleRawData(data);
 			}, function(error) {

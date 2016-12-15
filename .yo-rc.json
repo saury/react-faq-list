@@ -1,3 +1,4 @@
+// yo react-webpack:component namespaced/components
 {
   "generator-react-webpack": {}
 }
