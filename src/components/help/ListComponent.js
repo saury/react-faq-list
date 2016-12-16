@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
 
 import config from 'config';
@@ -16,21 +15,33 @@ require('styles/help/List.scss');
 class ListSearchBar extends React.Component {
 	constructor(props) {
 	    super(props);
+      this.state = {
+        value: '',
+        pressEnter: false
+      }
+      this.handleEnter = this.handleEnter.bind(this);
 	    this.handleChange = this.handleChange.bind(this);
 	}
-	// callback to filter the list according to the input value
-	handleChange() {
-	    this.props.searchOperation({
-	        searchValue: ReactDOM.findDOMNode(this.refs.filterNameInput).value
-	    });
+	// callback to filter the list according to the input value once enter btn clicked
+	handleEnter(e) {
+    // prevent call the callback fn many times
+    if(this.state.pressEnter) return;
+    if(e.keyCode === 13){
+	    this.props.cbRequestBySearch(this.state.value);
+    }
 	}
+  // sync the input words
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
 	render(){
 		return (
 			<div className="list-search-bar">
 				<input
 					type="text" placeholder="Search"
-					value={this.props.searchValue}
-					onChange={this.handleChange}
+					value={this.state.value}
+					onKeyUp={this.handleEnter}
+          onChange={this.handleChange}
 					ref="filterNameInput"
 				/>
 			</div>
@@ -79,44 +90,47 @@ class ListContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showAll: false,
-			showLoading: false
+      showAll: false,
+			showAllLoading: false,
+			showDetailLoading: false
 		}
 		this.showAllItems = this.showAllItems.bind(this);
 		this.handleCallback = this.handleCallback.bind(this);
 	}
 	// show all the list items
 	showAllItems(){
+    // show the loading icon
 		this.setState({
-			showAll: true
+			showAllLoading: true
 		})
+    this.props.cbLoadAll();
 	}
 	// callback to show the loading icon
 	handleCallback(bool){
 		this.setState({
-			showLoading: bool
+			showDetailLoading: bool
 		})
 	}
 	render(){
-		let result;
-		// display all the list item when the showAll state is triggered
-		if(!!this.state.showAll){
-			result = this.props.resultData.map((_data, idx) => <ListItem cb={this.handleCallback} key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
-		}
-		// else, only 5 items display
-		else {
-			result = this.props.resultData.slice(0,5).map((_data, idx) => <ListItem cb={this.handleCallback} key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
-		}
+		let result = this.props.resultData.map((_data, idx) => <ListItem cb={this.handleCallback} key={idx} body={_data.body} date={_data.date} url={_data.url} title={_data.title} />)
+
 		return (
 			<ul className="list-container">
-				{result}
-				<li className="list-more" style={{display: this.props.resultData.length > 5 && !this.state.showAll ? 'block' : 'none'}} onClick={() => this.showAllItems()}>
-					Show all {this.props.resultData.length} articles
-				</li>
-				<li style={{display: this.props.resultData.length === 0 ? 'block' : 'none', textAlign: 'center'}}>
-					<strong>Nothing found</strong>
-				</li>
-				<div style={{display: this.state.showLoading?'flex':'none'}} className="inner-loading"><LoadingComponent /></div>
+				<div className="list-result-conclude" style={{display: this.props.keywords ? 'block' : 'none'}}>
+					{this.props.resultData.length || 'No'} Results for "{this.props.keywords}"
+				</div>
+        <div className="list-no-result" style={{display: this.props.resultData.length === 0 ? 'block' : 'none'}}>
+          There are no results for "{this.props.keywords}"
+          <div className="btn" onClick={() => this.showAllItems()}>Browse Knowledge Base</div>
+        </div>
+        {result}
+        <li className="list-more" style={{display: this.props.hasMore > 0 ? 'block' : 'none'}} onClick={() => this.showAllItems()}>
+          <span>
+            <i style={{display: this.state.showAllLoading?'block':'none'}} className="loading-status" ><LoadingComponent /></i>
+            Show all {this.props.hasMore + this.props.resultData.length} articles
+          </span>
+        </li>
+				<div style={{display: this.state.showDetailLoading?'flex':'none'}} className="inner-loading"><LoadingComponent /></div>
 			</ul>
 		)
 	}
@@ -128,31 +142,27 @@ class ListComponent extends React.Component {
 		super(props);
 		this.state = {
 			virgin: true,
-			searchValue: '',
 			dataRaw: [],
-			dataFiltered: []
+			dataFiltered: [],
+      keywords: '',
+      hasMore: 0
 		}
-		this.handleUserInput = this.handleUserInput.bind(this);
+    this.handleUserInput = this.handleUserInput.bind(this);
+		this.requestAll = this.requestAll.bind(this);
 	}
 	// set the input value and reset the filtered data to get the right list items display
-	handleUserInput(data) {
-	    this.setState({
-	        searchValue: data.searchValue,
-	        dataFiltered: this.handleData(this.state.dataRaw, data.searchValue)
-	    });
+	handleUserInput(keyword) {
+    const _self = this;
+    http.get(config.apiSearch(keyword)).then(
+    function(data) {
+      _self.handleRawData(data);
+      _self.setState({
+        keywords: keyword
+      })
+    }, function(error) {
+      throw 'error info:'+error+', try refreshing the page';
+    })
 	}
-	// the help fn for function above
-	handleData(data, filter) {
-		let result = [];
-		data.forEach((item) => {
-			if (item.title.toLowerCase().indexOf(filter.toLowerCase()) === -1) {
-				return;
-			}
-			result.push(item);
-		});
-		return result;
-	}
-	// parser handle with the raw data
 	handleRawData(data){
 		let result = [];
 		data.Items.map(function(item){
@@ -166,23 +176,31 @@ class ListComponent extends React.Component {
 		this.setState({
 			virgin: false,
 			dataRaw: result,
-			dataFiltered: result
+			dataFiltered: result,
+      // reset the key words to hide the search result
+      keywords: '',
+      hasMore: data.TotalCount - data.PageSize
 		})
 	}
-	render() {
-		const _self = this;
-		if(this.state.virgin){
-			http.get(config.apiList()).then(
-			function(data) {
-				_self.handleRawData(data);
-			}, function(error) {
-				throw 'error info:'+error+', try refreshing the page';
-			})
-		}
+  // request all the data
+  requestAll(limit){
+    let query = limit ? ('&count=' + limit) : '';
+    const _self = this;
+    http.get(config.apiList() + query).then(
+    function(data) {
+      _self.handleRawData(data);
+    }, function(error) {
+      throw 'error info:'+error+', try refreshing the page';
+    })
+  }
+
+  render() {
+    // request 5 items at the first time
+    if(this.state.virgin) this.requestAll(5);
 		return (
 		  <div className="list-component">
-		    <ListSearchBar searchValue={this.state.searchValue} searchOperation={this.handleUserInput}/>
-		    <ListContainer resultData={this.state.dataFiltered}/>
+		    <ListSearchBar cbRequestBySearch={this.handleUserInput}/>
+		    <ListContainer keywords={this.state.keywords} cbLoadAll={this.requestAll} hasMore={this.state.hasMore} resultData={this.state.dataFiltered}/>
 		  	<div style={{display: this.state.virgin?'flex':'none'}} className="list-loading"><LoadingComponent /></div>
 		  </div>
 		);

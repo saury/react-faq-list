@@ -2,10 +2,16 @@
 
 import baseConfig from './base';
 
+// get the culture code
+let getLang = () => {
+  let result = location.search.match(/lang=(\w*\-\w*)\b&?/);
+  return result ? result[1] : 'en-US';
+}
+
 const preset = {
-  hostName: 'http://cnshhq-e1' + 'dev' /* dev or qa */ + '100:8000',
+  hostName: 'http://localhost:8888',
   prodCode: 'TBV3', // TBV3 or EFP
-  cultureCode: 'en-US' // en-US, zh-CN, id-ID, ru-RU
+  cultureCode: getLang() // en-US, zh-CN, id-ID, ru-RU
 }
 
 let config = {

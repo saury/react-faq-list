@@ -1,0 +1,91 @@
+{
+  "Items": [
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "trailblazers",
+        "tbv3"
+      ],
+      "SectionId": "201967181",
+      "Title": "Trailblazers Test Article",
+      "Body": "<p>Test test.</p>",
+      "Id": "206444221",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206444221-Trailblazers-Test-Article.json",
+      "CreatedStamp": "/Date(1481507568000)/",
+      "LastUpdatedStamp": "/Date(1481507638000)/"
+    },
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "customer article",
+        "trailblazers",
+        "tbv3",
+        "online school"
+      ],
+      "SectionId": "201967181",
+      "Title": "What are the requirements for EF Trailblazers Online School website?",
+      "Body": "<h1><span class=\"wysiwyg-font-size-small wysiwyg-color-black\"><strong>Please make sure that you access EF Trailblazers Online School website by IE11 or Chrome 51+ for PC and Chrome 51+ for Mac. You could also access the website by using Android tablet with Chrome 51+ however with diversity of Android tablets, we are not guarantee all Android tablets are compatible with EF Trailblazers Online School.</strong></span></h1>\n<p><span class=\"wysiwyg-font-size-medium\">Web browsers other than the one mentioned above will not be supported by EF.</span></p>",
+      "Id": "206385942",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206385942-What-are-the-requirements-for-EF-Trailblazers-Online-School-website-.json",
+      "CreatedStamp": "/Date(1481270423000)/",
+      "LastUpdatedStamp": "/Date(1481270534000)/"
+    },
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "customer article",
+        "trailblazers",
+        "tbv3",
+        "online school"
+      ],
+      "SectionId": "201967181",
+      "Title": "What are the requirements for EF Trailblazers Online School website?",
+      "Body": "<h1><span class=\"wysiwyg-font-size-small wysiwyg-color-black\"><strong>Please make sure that you access EF Trailblazers Online School website by IE11 or Chrome 51+ for PC and Chrome 51+ for Mac. You could also access the website by using Android tablet with Chrome 51+ however with diversity of Android tablets, we are not guarantee all Android tablets are compatible with EF Trailblazers Online School.</strong></span></h1>\n<p><span class=\"wysiwyg-font-size-medium\">Web browsers other than the one mentioned above will not be supported by EF.</span></p>",
+      "Id": "206385942",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206385942-What-are-the-requirements-for-EF-Trailblazers-Online-School-website-.json",
+      "CreatedStamp": "/Date(1481270423000)/",
+      "LastUpdatedStamp": "/Date(1481270534000)/"
+    },
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "customer article",
+        "trailblazers",
+        "tbv3",
+        "online school"
+      ],
+      "SectionId": "201967181",
+      "Title": "What are the requirements for EF Trailblazers Online School website?",
+      "Body": "<h1><span class=\"wysiwyg-font-size-small wysiwyg-color-black\"><strong>Please make sure that you access EF Trailblazers Online School website by IE11 or Chrome 51+ for PC and Chrome 51+ for Mac. You could also access the website by using Android tablet with Chrome 51+ however with diversity of Android tablets, we are not guarantee all Android tablets are compatible with EF Trailblazers Online School.</strong></span></h1>\n<p><span class=\"wysiwyg-font-size-medium\">Web browsers other than the one mentioned above will not be supported by EF.</span></p>",
+      "Id": "206385942",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206385942-What-are-the-requirements-for-EF-Trailblazers-Online-School-website-.json",
+      "CreatedStamp": "/Date(1481270423000)/",
+      "LastUpdatedStamp": "/Date(1481270534000)/"
+    },
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "customer article",
+        "trailblazers",
+        "tbv3",
+        "online school"
+      ],
+      "SectionId": "201967181",
+      "Title": "What are the requirements for EF Trailblazers Online School website?",
+      "Body": "<h1><span class=\"wysiwyg-font-size-small wysiwyg-color-black\"><strong>Please make sure that you access EF Trailblazers Online School website by IE11 or Chrome 51+ for PC and Chrome 51+ for Mac. You could also access the website by using Android tablet with Chrome 51+ however with diversity of Android tablets, we are not guarantee all Android tablets are compatible with EF Trailblazers Online School.</strong></span></h1>\n<p><span class=\"wysiwyg-font-size-medium\">Web browsers other than the one mentioned above will not be supported by EF.</span></p>",
+      "Id": "206385942",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206385942-What-are-the-requirements-for-EF-Trailblazers-Online-School-website-.json",
+      "CreatedStamp": "/Date(1481270423000)/",
+      "LastUpdatedStamp": "/Date(1481270534000)/"
+    }
+  ],
+  "Page": 1,
+  "PageSize": 5,
+  "PageCount": 1,
+  "TotalCount": 30
+}

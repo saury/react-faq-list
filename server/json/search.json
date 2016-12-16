@@ -1,0 +1,23 @@
+{
+  "Items": [
+    {
+      "AuthorId": "5065785207",
+      "CommentsDisabled": "False",
+      "Labels": [
+        "trailblazers",
+        "tbv3"
+      ],
+      "SectionId": "201967181",
+      "Title": "Trailblazers Test Article",
+      "Body": "<p>Test test.</p>",
+      "Id": "206444221",
+      "JsonUrl": "https://e1helpcenter1449671839.zendesk.com/api/v2/help_center/en-us/articles/206444221-Trailblazers-Test-Article.json",
+      "CreatedStamp": "/Date(1481507568000)/",
+      "LastUpdatedStamp": "/Date(1481507638000)/"
+    }
+  ],
+  "Page": 1,
+  "PageSize": 100,
+  "PageCount": 1,
+  "TotalCount": 1
+}
